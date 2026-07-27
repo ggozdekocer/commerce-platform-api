@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -13,13 +14,19 @@ public class ProductController {
 
     private final IProductService productService;
 
-    @GetMapping("/products")
-    public List<Product> getProducts() {
-        return productService.getAll();
-    }
 
+    @GetMapping("/products")
+    public Map<String, Object> getProducts() {
+        List<Product> products = productService.getAll();
+        return Map.of(
+                "products", products,
+                "total", (long) products.size()
+        );
+    }
     @GetMapping("/products/{id}")
     public Product getProductById(@PathVariable Long id) {
         return productService.getById(id);
     }
+
+
 }

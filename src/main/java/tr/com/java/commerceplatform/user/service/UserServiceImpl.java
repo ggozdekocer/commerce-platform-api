@@ -21,23 +21,23 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User save(SignupRequest request) {
-        Role role = roleRepository.findById(request.getRoleId())
+        Role role = roleRepository.findById(request.roleId())
                 .orElseThrow(() -> new RuntimeException("Role not found"));
 
         User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        user.setName(request.name());
+        user.setEmail(request.email());
+        user.setPassword(request.password());
         user.setRole(role);
 
         User savedUser = userRepository.save(user);
 
-        if (request.getStoreName() != null) {
+        if (request.storeName() != null) {
             Store store = new Store();
-            store.setName(request.getStoreName());
-            store.setPhone(request.getStorePhone());
-            store.setTaxNo(request.getStoreTaxNo());
-            store.setBankAccount(request.getStoreBankAccount());
+            store.setName(request.storeName());
+            store.setPhone(request.storePhone());
+            store.setTaxNo(request.storeTaxNo());
+            store.setBankAccount(request.storeBankAccount());
             store.setUser(savedUser);
             storeRepository.save(store);
         }
@@ -47,10 +47,10 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!user.getPassword().equals(request.getPassword())) {
+        if (!user.getPassword().equals(request.password())) {
             throw new RuntimeException("Invalid password");
         }
 

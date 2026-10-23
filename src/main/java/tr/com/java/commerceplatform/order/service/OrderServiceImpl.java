@@ -24,22 +24,22 @@ public class OrderServiceImpl implements IOrderService {
     public Order create(User user, OrderRequest request) {
         Order order = new Order();
         order.setUser(user);
-        order.setAddressId(request.getAddressId());
-        order.setOrderDate(request.getOrderDate());
-        order.setPrice(request.getPrice());
-        order.setCardNo(request.getCardNo());
-        order.setCardName(request.getCardName());
-        order.setCardExpireMonth(request.getCardExpireMonth());
-        order.setCardExpireYear(request.getCardExpireYear());
+        order.setAddressId(request.addressId());
+        order.setOrderDate(request.orderDate());
+        order.setPrice(request.price());
+        order.setCardNo(request.cardNo());
+        order.setCardName(request.cardName());
+        order.setCardExpireMonth(request.cardExpireMonth());
+        order.setCardExpireYear(request.cardExpireYear());
 
         List<OrderItem> items = new ArrayList<>();
-        for (OrderRequest.OrderProductRequest p : request.getProducts()) {
-            Product product = productRepository.findById(p.getProductId())
+        for (OrderRequest.OrderProductRequest p : request.products()) {
+            Product product = productRepository.findById(p.productId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
             OrderItem item = new OrderItem();
             item.setProduct(product);
-            item.setCount(p.getCount());
-            item.setDetail(p.getDetail());
+            item.setCount(p.count());
+            item.setDetail(p.detail());
             item.setOrder(order);
             items.add(item);
         }

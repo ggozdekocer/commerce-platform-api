@@ -2,6 +2,7 @@ package tr.com.java.commerceplatform.user.service;
 
 import tr.com.java.commerceplatform.auth.dto.LoginRequest;
 import tr.com.java.commerceplatform.auth.dto.SignupRequest;
+import tr.com.java.commerceplatform.common.exception.ResourceNotFoundException;
 import tr.com.java.commerceplatform.user.entity.Role;
 import tr.com.java.commerceplatform.store.entity.Store;
 import tr.com.java.commerceplatform.user.entity.User;
@@ -22,7 +23,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User save(SignupRequest request) {
         Role role = roleRepository.findById(request.roleId())
-                .orElseThrow(() -> new RuntimeException("Role not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + request.roleId()));
 
         User user = new User();
         user.setName(request.name());

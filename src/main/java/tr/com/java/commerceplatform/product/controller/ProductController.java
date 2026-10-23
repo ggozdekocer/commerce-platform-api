@@ -1,7 +1,7 @@
 package tr.com.java.commerceplatform.product.controller;
 
 import tr.com.java.commerceplatform.product.entity.Product;
-import tr.com.java.commerceplatform.product.service.IProductService;
+import tr.com.java.commerceplatform.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +12,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ProductController {
 
-    private final IProductService productService;
+    private final ProductService productService;
 
 
     @GetMapping("/products")

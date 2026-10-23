@@ -4,7 +4,7 @@ import tr.com.java.commerceplatform.auth.dto.LoginRequest;
 import tr.com.java.commerceplatform.auth.dto.SignupRequest;
 import tr.com.java.commerceplatform.user.entity.User;
 
-public interface IUserService {
+public interface UserService {
     User save(SignupRequest request);
     User login(LoginRequest request);
     User verify(String email);

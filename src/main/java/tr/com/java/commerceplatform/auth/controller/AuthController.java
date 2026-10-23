@@ -4,7 +4,7 @@ import tr.com.java.commerceplatform.auth.dto.LoginRequest;
 import tr.com.java.commerceplatform.auth.dto.SignupRequest;
 import tr.com.java.commerceplatform.user.entity.User;
 import tr.com.java.commerceplatform.auth.security.JwtUtil;
-import tr.com.java.commerceplatform.user.service.IUserService;
+import tr.com.java.commerceplatform.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final IUserService userService;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")

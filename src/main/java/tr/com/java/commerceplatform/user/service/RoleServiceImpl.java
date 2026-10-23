@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class RoleServiceImpl implements IRoleService {
+public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
 

@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CardServiceImpl implements ICardService {
+public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
 

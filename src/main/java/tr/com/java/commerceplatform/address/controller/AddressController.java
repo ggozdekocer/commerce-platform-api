@@ -2,7 +2,7 @@ package tr.com.java.commerceplatform.address.controller;
 
 import tr.com.java.commerceplatform.address.entity.Address;
 import tr.com.java.commerceplatform.user.entity.User;
-import tr.com.java.commerceplatform.address.service.IAddressService;
+import tr.com.java.commerceplatform.address.service.AddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AddressController {
 
-    private final IAddressService addressService;
+    private final AddressService addressService;
 
     @GetMapping
     public List<Address> getAddresses(Authentication authentication) {

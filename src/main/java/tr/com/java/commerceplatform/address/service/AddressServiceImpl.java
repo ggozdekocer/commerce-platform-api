@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AddressServiceImpl implements IAddressService {
+public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository addressRepository;
 

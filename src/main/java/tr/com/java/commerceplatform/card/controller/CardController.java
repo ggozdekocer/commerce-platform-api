@@ -2,7 +2,7 @@ package tr.com.java.commerceplatform.card.controller;
 
 import tr.com.java.commerceplatform.card.entity.Card;
 import tr.com.java.commerceplatform.user.entity.User;
-import tr.com.java.commerceplatform.card.service.ICardService;
+import tr.com.java.commerceplatform.card.service.CardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CardController {
 
-    private final ICardService cardService;
+    private final CardService cardService;
 
     @GetMapping
     public List<Card> getCards(Authentication authentication) {

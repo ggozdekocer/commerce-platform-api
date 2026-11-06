@@ -1,5 +1,9 @@
 package tr.com.java.commerceplatform.card.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/user/card")
 @RequiredArgsConstructor
+@Tag(name = "Cards", description = "Manage the saved payment cards of the logged-in user")
 public class CardController {
 
     private final CardService cardService;
@@ -32,6 +37,13 @@ public class CardController {
      * @param authentication the authentication of the current user, filled in by Spring Security
      * @return HTTP 200 with the card list wrapped in a CommonResponse
      */
+    @Operation(
+            summary = "List my cards",
+            description = "Returns all saved payment cards of the logged-in user. Requires a valid token.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Cards returned"),
+            @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired")
+    })
     @GetMapping
     public ResponseEntity<CommonResponse<List<Card>>> getCards(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
@@ -46,6 +58,14 @@ public class CardController {
      * @param authentication the authentication of the current user, filled in by Spring Security
      * @return HTTP 201 with the saved card wrapped in a CommonResponse
      */
+    @Operation(
+            summary = "Add a card",
+            description = "Saves a new payment card for the logged-in user. Requires a valid token.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Card saved"),
+            @ApiResponse(responseCode = "400", description = "The request body is missing or malformed"),
+            @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired")
+    })
     @PostMapping
     public ResponseEntity<CommonResponse<Card>> addCard(@RequestBody Card card,
                                                         Authentication authentication) {
@@ -62,6 +82,14 @@ public class CardController {
      * @param authentication the authentication of the current user, filled in by Spring Security
      * @return HTTP 200 with an empty payload and a confirmation message
      */
+    @Operation(
+            summary = "Delete a card",
+            description = "Deletes one of the logged-in user's saved cards. Requires a valid token.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Card deleted"),
+            @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired"),
+            @ApiResponse(responseCode = "404", description = "The card does not exist or belongs to another user")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<CommonResponse<Void>> deleteCard(@PathVariable Long id,
                                                            Authentication authentication) {

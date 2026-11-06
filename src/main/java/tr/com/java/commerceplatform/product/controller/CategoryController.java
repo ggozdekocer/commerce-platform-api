@@ -1,5 +1,9 @@
 package tr.com.java.commerceplatform.product.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +17,7 @@ import java.util.List;
 /** REST endpoints for reading product categories. */
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Categories", description = "Browse product categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -22,6 +27,12 @@ public class CategoryController {
      *
      * @return HTTP 200 with the category list wrapped in a CommonResponse
      */
+    @Operation(
+            summary = "List all categories",
+            description = "Returns every product category. No login required.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Categories returned")
+    })
     @GetMapping("/categories")
     public ResponseEntity<CommonResponse<List<Category>>> getCategories() {
         List<Category> categories = categoryService.getAll();

@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import tr.com.java.commerceplatform.auth.dto.LoginRequest;
 import tr.com.java.commerceplatform.auth.dto.SignupRequest;
+import tr.com.java.commerceplatform.common.exception.BadRequestException;
+import tr.com.java.commerceplatform.common.exception.ConflictException;
+import tr.com.java.commerceplatform.common.exception.InvalidCredentialsException;
 import tr.com.java.commerceplatform.common.exception.ResourceNotFoundException;
 import tr.com.java.commerceplatform.store.entity.Store;
 import tr.com.java.commerceplatform.store.repository.StoreRepository;
@@ -19,6 +22,8 @@ import tr.com.java.commerceplatform.user.repository.UserRepository;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    private static final String INVALID_CREDENTIALS_MESSAGE = "Invalid email or password";
+
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final StoreRepository storeRepository;
@@ -26,11 +31,22 @@ public class UserServiceImpl implements UserService {
     /**
      * {@inheritDoc}
      *
+     * @throws BadRequestException       if the role id is missing
+     * @throws ConflictException         if the email is already registered
      * @throws ResourceNotFoundException if the requested role does not exist
      */
     @Override
     public User save(SignupRequest request) {
         log.info("Signup requested with roleId={}", request.roleId());
+
+        if (request.roleId() == null) {
+            throw new BadRequestException("Role id is required");
+        }
+
+        if (userRepository.existsByEmail(request.email())) {
+            log.warn("Signup failed: email is already registered");
+            throw new ConflictException("Email is already registered");
+        }
 
         Role role = roleRepository.findById(request.roleId())
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + request.roleId()));
@@ -58,7 +74,11 @@ public class UserServiceImpl implements UserService {
         return savedUser;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * @throws InvalidCredentialsException if the email is unknown or the password is wrong
+     */
     @Override
     public User login(LoginRequest request) {
         log.info("Login attempt received");
@@ -66,12 +86,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> {
                     log.warn("Login failed: no user found for the given email");
-                    return new RuntimeException("User not found");
+                    return new InvalidCredentialsException(INVALID_CREDENTIALS_MESSAGE);
                 });
 
         if (!user.getPassword().equals(request.password())) {
             log.warn("Login failed: wrong password for user id={}", user.getId());
-            throw new RuntimeException("Invalid password");
+            throw new InvalidCredentialsException(INVALID_CREDENTIALS_MESSAGE);
         }
 
         log.info("User id={} logged in", user.getId());

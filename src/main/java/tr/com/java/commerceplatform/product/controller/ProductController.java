@@ -2,7 +2,6 @@ package tr.com.java.commerceplatform.product.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +32,7 @@ public class ProductController {
             summary = "List all products",
             description = "Returns every product with its category and images, plus the total number of products. "
                     + "No login required.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Products returned")
-    })
+    @ApiResponse(responseCode = "200", description = "Products returned")
     @GetMapping("/products")
     public ResponseEntity<CommonResponse<ProductListResponse>> getProducts() {
         List<Product> products = productService.getAll();
@@ -52,10 +49,8 @@ public class ProductController {
     @Operation(
             summary = "Get a product by id",
             description = "Returns one product with its category and images. No login required.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Product returned"),
-            @ApiResponse(responseCode = "404", description = "No product exists with the given id")
-    })
+    @ApiResponse(responseCode = "200", description = "Product returned")
+    @ApiResponse(responseCode = "404", description = "No product exists with the given id")
     @GetMapping("/products/{id}")
     public ResponseEntity<CommonResponse<Product>> getProductById(@PathVariable Long id) {
         Product product = productService.getById(id);

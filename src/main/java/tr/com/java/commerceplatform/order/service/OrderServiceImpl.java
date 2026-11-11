@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tr.com.java.commerceplatform.common.exception.BadRequestException;
 import tr.com.java.commerceplatform.common.exception.InsufficientStockException;
 import tr.com.java.commerceplatform.common.exception.ResourceNotFoundException;
+import tr.com.java.commerceplatform.common.util.CardNumberMasker;
 import tr.com.java.commerceplatform.order.dto.OrderRequest;
 import tr.com.java.commerceplatform.order.entity.Order;
 import tr.com.java.commerceplatform.order.entity.OrderItem;
@@ -49,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
         order.setUser(user);
         order.setAddressId(request.addressId());
         order.setOrderDate(request.orderDate());
-        order.setCardNo(request.cardNo());
+        order.setCardNo(CardNumberMasker.mask(request.cardNo()));
         order.setCardName(request.cardName());
         order.setCardExpireMonth(request.cardExpireMonth());
         order.setCardExpireYear(request.cardExpireYear());

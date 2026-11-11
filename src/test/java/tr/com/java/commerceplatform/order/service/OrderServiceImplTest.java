@@ -74,6 +74,7 @@ class OrderServiceImplTest {
         assertEquals(7, product.getStock());
         assertEquals(8, product.getSellCount());
         assertEquals(1, result.getItems().size());
+        assertEquals("**** **** **** 1111", result.getCardNo());
     }
 
     @Test

@@ -45,7 +45,9 @@ public class OrderController {
             @ApiResponse(responseCode = "201", description = "Order created"),
             @ApiResponse(responseCode = "400", description = "The request body is missing or malformed"),
             @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired"),
-            @ApiResponse(responseCode = "404", description = "One of the ordered products does not exist")
+            @ApiResponse(responseCode = "404", description = "One of the ordered products does not exist"),
+            @ApiResponse(responseCode = "400", description = "The order has no products or a count is not positive"),
+            @ApiResponse(responseCode = "409", description = "A product does not have enough stock"),
     })
     @PostMapping
     public ResponseEntity<CommonResponse<Order>> createOrder(@RequestBody OrderRequest request,

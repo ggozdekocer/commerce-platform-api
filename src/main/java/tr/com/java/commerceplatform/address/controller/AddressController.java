@@ -2,7 +2,6 @@ package tr.com.java.commerceplatform.address.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tr.com.java.commerceplatform.address.dto.AddressRequest;
+import tr.com.java.commerceplatform.address.dto.AddressResponse;
 import tr.com.java.commerceplatform.address.entity.Address;
 import tr.com.java.commerceplatform.address.service.AddressService;
 import tr.com.java.commerceplatform.common.response.CommonResponse;
@@ -40,39 +41,38 @@ public class AddressController {
     @Operation(
             summary = "List my addresses",
             description = "Returns all saved delivery addresses of the logged-in user. Requires a valid token.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Addresses returned"),
-            @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired")
-    })
+    @ApiResponse(responseCode = "200", description = "Addresses returned")
+    @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired")
     @GetMapping
-    public ResponseEntity<CommonResponse<List<Address>>> getAddresses(Authentication authentication) {
+    public ResponseEntity<CommonResponse<List<AddressResponse>>> getAddresses(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        List<Address> addresses = addressService.getAllByUser(user);
+        List<AddressResponse> addresses = addressService.getAllByUser(user).stream()
+                .map(AddressResponse::from)
+                .toList();
         return ResponseEntity.ok(CommonResponse.success(addresses, "Addresses retrieved successfully"));
     }
 
     /**
      * Adds a new address for the logged-in user.
      *
-     * @param address        the address to save
+     * @param request        the address data to save
      * @param authentication the authentication of the current user, filled in by Spring Security
      * @return HTTP 201 with the saved address wrapped in a CommonResponse
      */
     @Operation(
             summary = "Add an address",
             description = "Saves a new delivery address for the logged-in user. Requires a valid token.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Address saved"),
-            @ApiResponse(responseCode = "400", description = "The request body is missing or malformed"),
-            @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired")
-    })
+    @ApiResponse(responseCode = "201", description = "Address saved")
+    @ApiResponse(responseCode = "400", description = "The request body is missing or malformed")
+    @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired")
     @PostMapping
-    public ResponseEntity<CommonResponse<Address>> addAddress(@RequestBody Address address,
-                                                              Authentication authentication) {
+    public ResponseEntity<CommonResponse<AddressResponse>> addAddress(@RequestBody AddressRequest request,
+                                                                      Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        Address saved = addressService.save(user, address);
+        Address saved = addressService.save(user, request.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(CommonResponse.success(saved, "Address created successfully", HttpStatus.CREATED));
+                .body(CommonResponse.success(AddressResponse.from(saved),
+                        "Address created successfully", HttpStatus.CREATED));
     }
 
     /**
@@ -85,11 +85,9 @@ public class AddressController {
     @Operation(
             summary = "Delete an address",
             description = "Deletes one of the logged-in user's addresses. Requires a valid token.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Address deleted"),
-            @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired"),
-            @ApiResponse(responseCode = "404", description = "The address does not exist or belongs to another user")
-    })
+    @ApiResponse(responseCode = "200", description = "Address deleted")
+    @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired")
+    @ApiResponse(responseCode = "404", description = "The address does not exist or belongs to another user")
     @DeleteMapping("/{id}")
     public ResponseEntity<CommonResponse<Void>> deleteAddress(@PathVariable Long id,
                                                               Authentication authentication) {

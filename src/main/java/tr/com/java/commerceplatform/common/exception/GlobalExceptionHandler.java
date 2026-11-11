@@ -54,4 +54,11 @@ public class GlobalExceptionHandler {
         log.warn("Conflict: {}", ex.getMessage());
         return buildError(HttpStatus.CONFLICT, ex.getMessage());
     }
+
+    /** Handles orders that exceed the available stock and answers with HTTP 409. */
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<CommonResponse<Void>> handleInsufficientStock(InsufficientStockException ex) {
+        log.warn("Insufficient stock: {}", ex.getMessage());
+        return buildError(HttpStatus.CONFLICT, ex.getMessage());
+    }
 }

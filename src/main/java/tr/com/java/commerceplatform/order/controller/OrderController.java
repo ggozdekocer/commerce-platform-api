@@ -2,7 +2,6 @@ package tr.com.java.commerceplatform.order.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,14 +40,12 @@ public class OrderController {
             summary = "Create an order",
             description = "Creates an order for the logged-in user from the given address, payment details "
                     + "and product lines. Requires a valid token.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Order created"),
-            @ApiResponse(responseCode = "400", description = "The request body is missing or malformed"),
-            @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired"),
-            @ApiResponse(responseCode = "404", description = "One of the ordered products does not exist"),
-            @ApiResponse(responseCode = "400", description = "The order has no products or a count is not positive"),
-            @ApiResponse(responseCode = "409", description = "A product does not have enough stock"),
-    })
+    @ApiResponse(responseCode = "201", description = "Order created")
+    @ApiResponse(responseCode = "400",
+            description = "The request body is malformed, the order has no products or a count is not positive")
+    @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired")
+    @ApiResponse(responseCode = "404", description = "One of the ordered products does not exist")
+    @ApiResponse(responseCode = "409", description = "A product does not have enough stock")
     @PostMapping
     public ResponseEntity<CommonResponse<Order>> createOrder(@RequestBody OrderRequest request,
                                                              Authentication authentication) {
@@ -67,10 +64,8 @@ public class OrderController {
     @Operation(
             summary = "List my orders",
             description = "Returns all orders placed by the logged-in user. Requires a valid token.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Orders returned"),
-            @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired")
-    })
+    @ApiResponse(responseCode = "200", description = "Orders returned")
+    @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired")
     @GetMapping
     public ResponseEntity<CommonResponse<List<Order>>> getOrders(Authentication authentication) {
         User user = (User) authentication.getPrincipal();

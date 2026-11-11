@@ -2,7 +2,6 @@ package tr.com.java.commerceplatform.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +30,7 @@ public class RoleController {
             summary = "List all roles",
             description = "Returns the roles a user can choose when signing up. "
                     + "Use the id of a role as role_id in the signup request. No login required.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Roles returned")
-    })
+    @ApiResponse(responseCode = "200", description = "Roles returned")
     @GetMapping("/roles")
     public ResponseEntity<CommonResponse<List<Role>>> getRoles() {
         List<Role> roles = roleService.getAll();

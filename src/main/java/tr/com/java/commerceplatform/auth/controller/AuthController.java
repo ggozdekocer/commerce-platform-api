@@ -2,7 +2,6 @@ package tr.com.java.commerceplatform.auth.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -40,12 +39,10 @@ public class AuthController {
             summary = "Register a new user",
             description = "Creates a user with the given role. When store details are sent, "
                     + "a store is created for the user as well. Returns the user and a JWT token.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "User registered, token returned"),
-            @ApiResponse(responseCode = "400", description = "Role id is missing or the request body is malformed"),
-            @ApiResponse(responseCode = "404", description = "The given role id does not exist"),
-            @ApiResponse(responseCode = "409", description = "The email is already registered")
-    })
+    @ApiResponse(responseCode = "201", description = "User registered, token returned")
+    @ApiResponse(responseCode = "400", description = "Role id is missing or the request body is malformed")
+    @ApiResponse(responseCode = "404", description = "The given role id does not exist")
+    @ApiResponse(responseCode = "409", description = "The email is already registered")
     @PostMapping("/signup")
     public ResponseEntity<CommonResponse<Map<String, Object>>> signup(@RequestBody SignupRequest request) {
         User user = userService.save(request);
@@ -64,11 +61,9 @@ public class AuthController {
             summary = "Log in",
             description = "Checks the email and password and returns the user with a JWT token. "
                     + "Send the token in the Authorization header as 'Bearer <token>' on protected endpoints.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Login successful, token returned"),
-            @ApiResponse(responseCode = "400", description = "The request body is missing or malformed"),
-            @ApiResponse(responseCode = "401", description = "The email is unknown or the password is wrong")
-    })
+    @ApiResponse(responseCode = "200", description = "Login successful, token returned")
+    @ApiResponse(responseCode = "400", description = "The request body is missing or malformed")
+    @ApiResponse(responseCode = "401", description = "The email is unknown or the password is wrong")
     @PostMapping("/login")
     public ResponseEntity<CommonResponse<Map<String, Object>>> login(@RequestBody LoginRequest request) {
         User user = userService.login(request);
@@ -85,10 +80,8 @@ public class AuthController {
             summary = "Verify the current session",
             description = "Checks the JWT token of the caller and returns the user with a renewed token. "
                     + "Requires a valid token.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Session is valid, renewed token returned"),
-            @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired")
-    })
+    @ApiResponse(responseCode = "200", description = "Session is valid, renewed token returned")
+    @ApiResponse(responseCode = "403", description = "The token is missing, invalid or expired")
     @GetMapping("/verify")
     public ResponseEntity<CommonResponse<Map<String, Object>>> verify(Authentication authentication) {
         User user = (User) authentication.getPrincipal();

@@ -2,7 +2,6 @@ package tr.com.java.commerceplatform.product.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +29,7 @@ public class CategoryController {
     @Operation(
             summary = "List all categories",
             description = "Returns every product category. No login required.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Categories returned")
-    })
+    @ApiResponse(responseCode = "200", description = "Categories returned")
     @GetMapping("/categories")
     public ResponseEntity<CommonResponse<List<Category>>> getCategories() {
         List<Category> categories = categoryService.getAll();

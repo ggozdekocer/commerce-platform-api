@@ -41,9 +41,9 @@ class OrderServiceImplTest {
     private final User user = buildUser();
 
     private User buildUser() {
-        User user = new User();
-        user.setId(1L);
-        return user;
+        User testUser = new User();
+        testUser.setId(1L);
+        return testUser;
     }
 
     private Product buildProduct(Long id, double price, int stock, int sellCount) {

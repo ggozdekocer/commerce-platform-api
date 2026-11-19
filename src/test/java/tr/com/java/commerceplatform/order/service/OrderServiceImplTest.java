@@ -38,6 +38,7 @@ class OrderServiceImplTest {
 
     @InjectMocks
     private OrderServiceImpl orderService;
+    private final User user = buildUser();
 
     private User buildUser() {
         User user = new User();
@@ -85,7 +86,7 @@ class OrderServiceImplTest {
 
         OrderRequest request = buildRequest(500.0, List.of(new OrderRequest.OrderProductRequest(10L, 5, null)));
 
-        assertThrows(InsufficientStockException.class, () -> orderService.create(buildUser(), request));
+        assertThrows(InsufficientStockException.class, () -> orderService.create(user, request));
         verify(orderRepository, never()).save(any(Order.class));
     }
 
@@ -96,7 +97,7 @@ class OrderServiceImplTest {
 
         OrderRequest request = buildRequest(100.0, List.of(new OrderRequest.OrderProductRequest(99L, 1, null)));
 
-        assertThrows(ResourceNotFoundException.class, () -> orderService.create(buildUser(), request));
+        assertThrows(ResourceNotFoundException.class, () -> orderService.create(user, request));
         verify(orderRepository, never()).save(any(Order.class));
     }
 
@@ -105,7 +106,7 @@ class OrderServiceImplTest {
     void shouldFailWhenOrderHasNoProducts() {
         OrderRequest request = buildRequest(0.0, List.of());
 
-        assertThrows(BadRequestException.class, () -> orderService.create(buildUser(), request));
+        assertThrows(BadRequestException.class, () -> orderService.create(user, request));
         verify(orderRepository, never()).save(any(Order.class));
     }
 
@@ -114,7 +115,7 @@ class OrderServiceImplTest {
     void shouldFailWhenCountIsNotPositive() {
         OrderRequest request = buildRequest(0.0, List.of(new OrderRequest.OrderProductRequest(10L, 0, null)));
 
-        assertThrows(BadRequestException.class, () -> orderService.create(buildUser(), request));
+        assertThrows(BadRequestException.class, () -> orderService.create(user, request));
         verify(orderRepository, never()).save(any(Order.class));
     }
 }

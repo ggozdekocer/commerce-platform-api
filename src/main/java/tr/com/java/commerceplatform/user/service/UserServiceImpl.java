@@ -103,6 +103,6 @@ public class UserServiceImpl implements UserService {
     public User verify(String email) {
         log.debug("Verifying session for an existing user");
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }

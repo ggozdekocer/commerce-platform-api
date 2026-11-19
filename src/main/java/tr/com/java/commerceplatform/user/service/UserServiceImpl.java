@@ -15,6 +15,7 @@ import tr.com.java.commerceplatform.user.entity.Role;
 import tr.com.java.commerceplatform.user.entity.User;
 import tr.com.java.commerceplatform.user.repository.RoleRepository;
 import tr.com.java.commerceplatform.user.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /** Default implementation of {@link UserService} backed by the user, role and store repositories. */
 @Slf4j
@@ -27,6 +28,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final StoreRepository storeRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * {@inheritDoc}
@@ -54,7 +56,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setName(request.name());
         user.setEmail(request.email());
-        user.setPassword(request.password());
+        user.setPassword(passwordEncoder.encode(request.password()));
         user.setRole(role);
 
         User savedUser = userRepository.save(user);
@@ -89,7 +91,7 @@ public class UserServiceImpl implements UserService {
                     return new InvalidCredentialsException(INVALID_CREDENTIALS_MESSAGE);
                 });
 
-        if (!user.getPassword().equals(request.password())) {
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             log.warn("Login failed: wrong password for user id={}", user.getId());
             throw new InvalidCredentialsException(INVALID_CREDENTIALS_MESSAGE);
         }

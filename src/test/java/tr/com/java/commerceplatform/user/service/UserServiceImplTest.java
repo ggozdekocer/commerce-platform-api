@@ -18,6 +18,7 @@ import tr.com.java.commerceplatform.user.entity.Role;
 import tr.com.java.commerceplatform.user.entity.User;
 import tr.com.java.commerceplatform.user.repository.RoleRepository;
 import tr.com.java.commerceplatform.user.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -36,6 +37,7 @@ class UserServiceImplTest {
 
     private static final String EMAIL = "ada@example.com";
     private static final String PASSWORD = "secret123";
+    private static final String HASHED = "hashed-password";
 
     @Mock
     private UserRepository userRepository;
@@ -48,6 +50,9 @@ class UserServiceImplTest {
 
     @InjectMocks
     private UserServiceImpl userService;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     private SignupRequest buildSignup(Long roleId, String storeName) {
         return new SignupRequest("Ada", EMAIL, PASSWORD, roleId, storeName, null, null, null);
@@ -65,6 +70,7 @@ class UserServiceImplTest {
     @DisplayName("Registers a normal user without creating a store")
     void shouldRegisterUserWithoutStore() {
         Role role = mock(Role.class);
+        when(passwordEncoder.encode(PASSWORD)).thenReturn(HASHED);
         when(roleRepository.findById(2L)).thenReturn(Optional.of(role));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -72,6 +78,7 @@ class UserServiceImplTest {
 
         assertEquals(EMAIL, result.getEmail());
         assertSame(role, result.getRole());
+        assertEquals(HASHED, result.getPassword());
         verify(storeRepository, never()).save(any(Store.class));
     }
 
@@ -119,8 +126,9 @@ class UserServiceImplTest {
     @Test
     @DisplayName("Returns the user when the email and password match")
     void shouldLoginWithCorrectCredentials() {
-        User user = buildUser(PASSWORD);
+        User user = buildUser(HASHED);
         when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(PASSWORD, HASHED)).thenReturn(true);
 
         User result = userService.login(new LoginRequest(EMAIL, PASSWORD));
 
@@ -139,7 +147,8 @@ class UserServiceImplTest {
     @Test
     @DisplayName("Throws InvalidCredentialsException when the password is wrong")
     void shouldFailLoginWhenPasswordIsWrong() {
-        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(buildUser(PASSWORD)));
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(buildUser(HASHED)));
+        when(passwordEncoder.matches("wrong-password", HASHED)).thenReturn(false);
         LoginRequest request = new LoginRequest(EMAIL, "wrong-password");
 
         assertThrows(InvalidCredentialsException.class, () -> userService.login(request));

@@ -9,6 +9,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import tr.com.java.commerceplatform.common.exception.ResourceNotFoundException;
 import tr.com.java.commerceplatform.product.entity.Product;
 import tr.com.java.commerceplatform.product.repository.ProductRepository;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import tr.com.java.commerceplatform.common.exception.BadRequestException;
+
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.List;
 import java.util.Optional;
@@ -65,5 +74,39 @@ class ProductServiceImplTest {
                 assertThrows(ResourceNotFoundException.class, () -> productService.getById(99L));
 
         assertEquals("Product not found with id: 99", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Searches with the page, page size and sort order that were asked for")
+    void shouldSearchWithPagingAndSorting() {
+        when(productRepository.findAll(ArgumentMatchers.<Specification<Product>>any(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(new Product())));
+
+        productService.search(1L, "shirt", "price:desc", 50, 25);
+
+        ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+        verify(productRepository).findAll(ArgumentMatchers.<Specification<Product>>any(), captor.capture());
+        Pageable pageable = captor.getValue();
+        assertEquals(2, pageable.getPageNumber());
+        assertEquals(25, pageable.getPageSize());
+        assertEquals(Sort.Direction.DESC, pageable.getSort().getOrderFor("price").getDirection());
+    }
+
+    @Test
+    @DisplayName("Throws BadRequestException when the limit is larger than 100")
+    void shouldFailSearchWhenLimitIsTooLarge() {
+        assertThrows(BadRequestException.class, () -> productService.search(null, null, null, 0, 101));
+    }
+
+    @Test
+    @DisplayName("Throws BadRequestException when the offset is negative")
+    void shouldFailSearchWhenOffsetIsNegative() {
+        assertThrows(BadRequestException.class, () -> productService.search(null, null, null, -1, 25));
+    }
+
+    @Test
+    @DisplayName("Throws BadRequestException when the sort field is not allowed")
+    void shouldFailSearchWhenSortFieldIsUnknown() {
+        assertThrows(BadRequestException.class, () -> productService.search(null, null, "color:asc", 0, 25));
     }
 }

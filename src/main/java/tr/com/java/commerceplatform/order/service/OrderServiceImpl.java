@@ -30,6 +30,8 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private static final double PRICE_TOLERANCE = 0.01;
+    /** Flat shipping fee added to the price of every order. */
+    private static final double SHIPPING_FEE = 29.99;
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
@@ -76,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
             items.add(item);
         }
 
-        double serverPrice = Math.round(total * 100) / 100.0;
+        double serverPrice = Math.round((total + SHIPPING_FEE) * 100) / 100.0;
         if (request.price() != null && Math.abs(serverPrice - request.price()) > PRICE_TOLERANCE) {
             log.warn("Price sent by the client ({}) differs from the calculated price ({}), using the calculated one",
                     request.price(), serverPrice);

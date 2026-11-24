@@ -71,7 +71,7 @@ class OrderServiceImplTest {
 
         Order result = orderService.create(buildUser(), request);
 
-        assertEquals(300.0, result.getPrice());
+        assertEquals(329.99, result.getPrice(), 0.001);
         assertEquals(7, product.getStock());
         assertEquals(8, product.getSellCount());
         assertEquals(1, result.getItems().size());

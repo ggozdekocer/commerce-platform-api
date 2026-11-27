@@ -10,7 +10,7 @@ WORKDIR /app
 # Run the application as a normal user instead of root
 RUN groupadd --system app && useradd --system --gid app app
 
-COPY --from=build --chown=app:app /app/target/ecommerce-backend-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build --chown=app:app /app/target/*.jar app.jar
 
 USER app
 EXPOSE 8080

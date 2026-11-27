@@ -1,15 +1,10 @@
 package tr.com.java.commerceplatform.auth.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class LoginRequest {
-    private String email;
-    private String password;
+/**
+ * Request body for the login endpoint.
+ *
+ * @param email    the email address of the user
+ * @param password the raw password of the user
+ */
+public record LoginRequest(String email, String password) {
 }
